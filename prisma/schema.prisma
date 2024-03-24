@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Auth {
+  id           String  @id @default(uuid())
+  password     String
+  refreshToken String?
+  userId       String  @unique
+  email        String  @unique
+  user         User    @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id        String    @id @default(uuid())
+  firstName String
+  lastName  String    @unique
+  role      UserRole
+  year      Int
+  email     String    @unique
+  auth      Auth?
+  messages  Message[]
+  threads   Thread[]
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  name        String
+  semester    String
+  year        Int
+  uniCourseId String
+  Thread      Thread[]
+}
+
+model Thread {
+  id             String     @id @default(uuid())
+  courseId       String
+  authorId       String
+  createdAt      DateTime   @default(now())
+  urgencyTag     UrgencyTag
+  status         Status
+  topic          String
+  content        String
+  parentThreadId String?
+  Message        Message[]
+  user           User       @relation(fields: [authorId], references: [id])
+  course         Course     @relation(fields: [courseId], references: [id])
+  parentThread   Thread?    @relation("ChildThreads", fields: [parentThreadId], references: [id])
+  childThreads   Thread[]   @relation("ChildThreads")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  threadId  String
+  authorId  String
+  message   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [authorId], references: [id])
+  thread    Thread   @relation(fields: [threadId], references: [id])
+}
+
+enum UserRole {
+  Student
+  TA
+  Lecturer
+}
+
+enum Status {
+  pending
+  answers
+  archieved
+}
+
+enum UrgencyTag {
+  urgent
+  regular
+  lowPriority
+}
