@@ -26,6 +26,7 @@ model User {
   auth      Auth?
   messages  Message[]
   threads   Thread[]
+  userCourses UserCourse[]
 }
 
 model Course {
@@ -35,6 +36,18 @@ model Course {
   year        Int
   uniCourseId String
   Thread      Thread[]
+  userCourses UserCourse[]
+}
+
+model UserCourse {
+  userId      String
+  courseId    String
+  createdAt   DateTime  @default(now())
+  
+  @@id([userId, courseId])
+  
+  user        User      @relation(fields: [userId], references: [id])
+  course      Course    @relation(fields: [courseId], references: [id])
 }
 
 model Thread {
@@ -72,8 +85,8 @@ enum UserRole {
 
 enum Status {
   pending
-  answers
-  archieved
+  answered
+  archived
 }
 
 enum UrgencyTag {
