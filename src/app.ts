@@ -10,13 +10,14 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(authMiddleware);
+app.use('/auth', authRoutes);
 
+
+app.use(authMiddleware);
 // Routes
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!');
 })
-app.use('/auth', authRoutes);
 app.use('/courses', courseRoutes);
 
 export default app;
