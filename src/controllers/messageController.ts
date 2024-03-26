@@ -75,32 +75,35 @@ async function createMessage(req: Request, res: Response) {
             }
         });
 
-        //This code checks to see if the message is posted by an Ajarn
-        //If it is, then the code modifies the status of the thread
+        // Fetch message author details
         const messageAuthor = await prisma.user.findUnique({
             where: {
-                authorId
+                id: authorId
             }
-        })
-        if (messageAuthor.UserRole == prisma.UserRole.Lecturer) {
-            await prisma.thread.update(
-                {
-                    where: {
-                        threadId,
-                    },
-                    data: {
-                        status: prisma.Status.answered,
-                    }
+        });
+
+        // Check if message author is a Lecturer
+        if (messageAuthor?.UserRole === prisma.UserRole.Lecturer) {
+            // Update thread status to answered
+            await prisma.thread.update({
+                where: {
+                    id: threadId,
+                },
+                data: {
+                    status: prisma.Status.answered,
                 }
-            )
-            res.status(200).send('Successfully posted message; Thread status has been changed to ' + prisma.Status.);
+            });
+
+            // Send success response with updated thread status
+            res.status(200).send('Successfully posted message; Thread status has been changed to ' + prisma.Status.answered);
         } else {
+            // Send success response without updating thread status
             res.status(200).send('Successfully posted message');
         }
-    } catch (err) {
-        res.status(500).send('Internal Server Error');
+    } catch (err: any) {
+        // Send error response with detailed error message
+        res.status(500).send('Error creating message: ' + err.message);
     }
 }
-
 
 export { getAllMessages, createMessage, getSingleMessage, updateMessage};
