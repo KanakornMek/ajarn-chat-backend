@@ -28,6 +28,7 @@ async function joinCourse(req: Request, res: Response) {
         if (!userId) {
             return res.status(400).json({ error: 'User ID not provided' });
         }
+        console.log(userId)
         const userCourse = await prisma.userCourse.create({
             data: {
                 courseId,
