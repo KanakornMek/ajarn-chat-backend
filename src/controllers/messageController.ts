@@ -56,6 +56,7 @@ async function updateMessage(req: Request, res: Response) {
                 lastUpdated: new Date(Date.now())
             }
         });
+        res.status(200).json(message);
     } catch (err) {
         res.status(500).send('Internal Server Error');
     }
@@ -73,6 +74,29 @@ async function createMessage(req: Request, res: Response) {
                 message,
             }
         });
+
+        //This code checks to see if the message is posted by an Ajarn
+        //If it is, then the code modifies the status of the thread
+        const messageAuthor = await prisma.user.findUnique({
+            where: {
+                authorId
+            }
+        })
+        if (messageAuthor.UserRole == prisma.UserRole.Lecturer) {
+            await prisma.thread.update(
+                {
+                    where: {
+                        threadId,
+                    },
+                    data: {
+                        status: prisma.Status.answered,
+                    }
+                }
+            )
+            res.status(200).send('Successfully posted message; Thread status has been changed to ' + prisma.Status.);
+        } else {
+            res.status(200).send('Successfully posted message');
+        }
     } catch (err) {
         res.status(500).send('Internal Server Error');
     }
