@@ -8,22 +8,24 @@ import parseUserRole from '../helpers/userRoleParser';
 async function login(req: Request, res: Response) {
     const { email, password } = req.body;
 
-    const user = await prisma.auth.findUnique({
+    const auth = await prisma.auth.findUnique({
         where: {
             email
+        }, include: {
+            user: true
         }
     });
 
-    if (!user) {
+    if (!auth) {
         return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    if (!bcrypt.compareSync(password, user.password)) {
+    if (!bcrypt.compareSync(password, auth.password)) {
         return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    const accessToken = jwt.sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ userId: user.id }, process.env.REFRESH_TOKEN_SECRET as string);
+    const accessToken = jwt.sign({ userId: auth.user.id }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '30m' });
+    const refreshToken = jwt.sign({ userId: auth.user.id }, process.env.REFRESH_TOKEN_SECRET as string);
 
 
     res.json({ accessToken, refreshToken });
@@ -47,9 +49,14 @@ async function refreshaccessToken(req: Request, res: Response) {
     });
 }
 
-// async function logout(req: Request, res: Response) {
+async function logout(req: Request, res: Response) {
+    try {
+        const userId = req.user?.id;
+        
+    } catch(err) {
 
-// }
+    }
+}
 
 async function signup(req: Request, res: Response) {
     try {
