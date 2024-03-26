@@ -56,11 +56,6 @@ async function updateMessage(req: Request, res: Response) {
                 lastUpdated: new Date(Date.now())
             }
         });
-        res.json({
-            message: message.message,
-            authorId: message.authorId,
-            threadId: message.threadId,
-        });
     } catch (err) {
         res.status(500).send('Internal Server Error');
     }
@@ -78,7 +73,6 @@ async function createMessage(req: Request, res: Response) {
                 message,
             }
         });
-        
     } catch (err) {
         res.status(500).send('Internal Server Error');
     }
