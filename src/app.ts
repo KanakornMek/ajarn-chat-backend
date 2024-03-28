@@ -19,6 +19,5 @@ app.get('/', (req: Request, res: Response) => {
 })
 app.use('/auth', authRoutes);
 app.use('/courses', courseRoutes);
-app.use('/threads', threadRoutes);
 
 export default app;
