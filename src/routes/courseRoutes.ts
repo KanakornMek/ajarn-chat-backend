@@ -1,6 +1,6 @@
 import express from 'express';
 import { getCourses, joinCourse } from '../controllers/courseController';
-import threadRoutes from './threadRoutes'
+import threadRoutes from './threadRoutes';
 const router = express.Router();
 router.use('/:course_id/threads', threadRoutes);
 
