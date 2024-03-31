@@ -41,4 +41,115 @@ async function joinCourse(req: Request, res: Response) {
     }
 }
 
-export { getCourses, joinCourse };
+async function getCourseInfo(req: Request, res: Response) {
+    try {
+        const { courseId } = req.params;
+        const course = await prisma.course.findUnique({
+            where: {
+                id: courseId
+            },
+        })
+        if (!course) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+        res.status(200).json(course);
+    }
+
+    catch(err) {
+        res.status(500).send(err);
+    }
+}
+
+async function createCourse(req: Request, res: Response) {
+    try {
+        const {name, semester, year, unicourseID} = req.body;
+        const uniCourseId = req.body.uniCourseId;
+        if (!name || !semester || !year || !uniCourseId) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        if (typeof name !== 'string' ||
+            typeof semester !== 'string' ||
+            typeof year !== 'number' ||
+            typeof uniCourseId !== 'string') {
+            return res.status(400).json({ error: 'Invalid data types' });
+        }
+
+        if (year <= 0 || !Number.isInteger(year)) {
+            return res.status(422).json({ error: 'Year must be a positive integer' });
+        }
+
+        const course = await prisma.course.create({
+            data: {
+                name,
+                semester,
+                year,
+                uniCourseId
+            }
+        })
+        res.status(201).json(course);
+    }
+
+    catch(err) {
+        res.status(500).send(err);
+    }
+}
+
+async function updateCourseInfo(req: Request, res: Response) {
+    try {
+        const {courseId} = req.params;
+        const {name, semester, year, uniCourseId} = req.body;
+        if (!courseId ||!name ||!semester ||!year ||!uniCourseId) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        if (typeof name !== 'string' ||
+            typeof semester !== 'string' ||
+            typeof year !== 'number' ||
+            typeof uniCourseId !== 'number') {
+            return res.status(400).json({ error: 'Invalid data types' });
+        }
+        if (year <= 0 || !Number.isInteger(year)) {
+            return res.status(422).json({ error: 'Year must be a positive integer' });
+        }
+        const course = await prisma.course.update({
+            where: {
+                courseId
+            },
+            data: {
+                name,
+                semester,
+                year,
+                uniCourseId
+            }
+        })
+        if (!course) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+        res.status(200).json(course);
+    }
+
+    catch(err) {
+        res.status(500).send(err);
+    }
+}
+
+async function deleteCourse(req: Request, res: Response) {
+    try {
+        const {courseId} = req.params;
+        const course = await prisma.course.delete({
+            where: {
+                courseId
+            }
+        })
+        if (!course) {
+            return res.status(404).json({ error: 'Course not found' });
+        }
+        res.status(200).json(course);
+    }
+
+    catch(err) {
+        res.status(500).send(err);
+    }
+}
+
+
+export { getCourses, joinCourse, getCourseInfo, createCourse};
