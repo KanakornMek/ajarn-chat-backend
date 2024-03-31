@@ -1,12 +1,13 @@
 import express, { Request, Response, Router } from 'express';
 import { prisma } from '../db/prismaClient';
+import { UserRole, Status } from '@prisma/client';
 
 const router: Router = express.Router();
 
 // Sees all the messages associated with a given thread
 async function getAllMessages(req: Request, res: Response) {
     try {
-        const threadId: string = req.query.threadId as string;
+        const threadId = req.params.threadId as string;
         const limit: number = parseInt(req.query.limit as string, 10);
         const messages = await prisma.message.findMany({
             where: {
@@ -43,7 +44,7 @@ async function getSingleMessage(req: Request, res: Response) {
 // Updates the message contents from FrontEnd
 async function updateMessage(req: Request, res: Response) {
     try {
-        const messageId: string = req.params.message_id;
+        const messageId: string = req.params.message_id as string;
         const updateData = req.body;
         if (!updateData.message) {
             res.status(400).send("No contents in the request");
@@ -53,7 +54,7 @@ async function updateMessage(req: Request, res: Response) {
             where: { id: messageId },
             data: {
                 message: updateData.message,
-                lastUpdated: new Date(Date.now())
+                //Note: add LastUpdated (after modifying in Prisma Schema)
             }
         });
         res.status(200).json(message);
@@ -66,7 +67,9 @@ async function updateMessage(req: Request, res: Response) {
 // Creates a new message in the database with a reference to the given thread
 async function createMessage(req: Request, res: Response) {
     try {
-        const { threadId, authorId, message } = req.body;
+        const authorId = req.user?.id as string;
+        const message = req.body.message;
+        const threadId = req.params.threadId as string;
         const createdMessage = await prisma.message.create({
             data: {
                 //Automatically generates a unique message id
@@ -82,21 +85,26 @@ async function createMessage(req: Request, res: Response) {
                 id: authorId
             }
         });
+        
+        if (!messageAuthor) {
+            res.status(401).send('Author not found');
+            return;
+        }
 
         // Check if message author is a Lecturer
-        if (messageAuthor?.UserRole === prisma.UserRole.Lecturer) {
+        if (messageAuthor?.role === UserRole.Lecturer) {
             // Update thread status to answered
             await prisma.thread.update({
                 where: {
                     id: threadId,
                 },
                 data: {
-                    status: prisma.Status.answered,
+                    status: Status.answered,
                 }
             });
 
             // Send success response with updated thread status
-            res.status(200).send('Successfully posted message; Thread status has been changed to ' + prisma.Status.answered);
+            res.status(200).send('Successfully posted message; Thread status has been changed to ' + Status.answered);
         } else {
             // Send success response without updating thread status
             res.status(200).send('Successfully posted message');
