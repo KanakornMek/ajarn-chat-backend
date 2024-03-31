@@ -2,11 +2,11 @@ import { UserRole } from "@prisma/client";
 
 export default function parseUserRole(role: string): UserRole {
     switch (role.toUpperCase()) {
-      case 'ADMIN':
+      case 'STUDENT':
         return UserRole.Student;
-      case 'USER':
+      case 'TA':
         return UserRole.TA;
-      case 'MODERATOR':
+      case 'LECTURER':
         return UserRole.Lecturer;
       default:
         return UserRole.Student; // or handle invalid input accordingly
