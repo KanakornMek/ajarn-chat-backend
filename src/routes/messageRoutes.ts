@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllMessages, createMessage, getSingleMessage,updateMessage } from '../controllers/messageController';
+import { getAllMessages, createMessage, getSingleMessage,updateMessage,deleteMessage } from '../controllers/messageController';
 const router = express.Router();
 
 //Gets all the messages associated with the given thread
@@ -10,12 +10,16 @@ router.get('/messages', getAllMessages);
 //Note: This assumes that the request passes a message_id already 
 router.get('/messeges/:message_id', getSingleMessage);
 
-//Gets a single message 
+//Updates a single message 
 //Note: This assumes that the request passes a message_id already 
-router.put('/messages/:message_id', updateMessage);
+router.put('/messages/:message_id/update', updateMessage);
 
 //Creates a new message with a unique ID
 router.post('/messages', createMessage);
+
+//Deletes a single message
+//Note: This assumes that the request passes a message_id already
+router.delete('/messages/:message_id/delete', deleteMessage);
 
 export default router;
 

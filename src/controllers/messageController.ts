@@ -69,6 +69,7 @@ async function createMessage(req: Request, res: Response) {
         const { threadId, authorId, message } = req.body;
         const createdMessage = await prisma.message.create({
             data: {
+                //Automatically generates a unique message id
                 threadId,
                 authorId,
                 message,
@@ -106,4 +107,23 @@ async function createMessage(req: Request, res: Response) {
     }
 }
 
-export { getAllMessages, createMessage, getSingleMessage, updateMessage};
+// Deletes a single message from the database
+// Assumes that the request passes an existing messageID
+async function deleteMessage(req: Request, res: Response) { 
+    try {
+        const messageId: string = req.params.message_id;
+        const message = await prisma.message.delete({
+            where: {
+                id: messageId
+            }
+        });
+        if (!message) {
+            res.status(404).send('Message not found');
+        }
+        res.status(200).json(message);
+    } catch (err) {
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+export { getAllMessages, createMessage, getSingleMessage, updateMessage, deleteMessage};
