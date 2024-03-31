@@ -9,7 +9,6 @@ async function getCourses(req: Request, res: Response) {
         const courses = await prisma.userCourse.findMany({
             where: {
                 userId,
-
             },
             include: {
                 course: true
