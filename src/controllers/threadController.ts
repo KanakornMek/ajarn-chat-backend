@@ -87,7 +87,8 @@ async function getThread(req: Request, res: Response) {
 }
 
 async function createThread(req: Request, res: Response) {
-    let {course_id, urgencyTagString, topic, content, parentThread, authorId} = req.body;
+    let {course_id, urgencyTagString, topic, content, parentThread} = req.body;
+    let authorId = req.user?.id
     if (!parentThread){
         parentThread = null;
     }
@@ -100,13 +101,13 @@ async function createThread(req: Request, res: Response) {
                 urgencyTag,
                 topic,
                 content,
-                course: {
+                Course: {
                     connect: {id: course_id}
                 },
-                user: {
+                User: {
                     connect: {id: authorId}
                 },
-                parentThread: {
+                other_Thread: {
                     connect: {id: parentThread}
                 }
             }

@@ -13,20 +13,7 @@ model Auth {
   refreshToken String?
   userId       String  @unique
   email        String  @unique
-  user         User    @relation(fields: [userId], references: [id])
-}
-
-model User {
-  id        String    @id @default(uuid())
-  firstName String
-  lastName  String    @unique
-  role      UserRole
-  year      Int
-  email     String    @unique
-  auth      Auth?
-  messages  Message[]
-  threads   Thread[]
-  userCourses UserCourse[]
+  User         User    @relation(fields: [userId], references: [id])
 }
 
 model Course {
@@ -36,18 +23,17 @@ model Course {
   year        Int
   uniCourseId String
   Thread      Thread[]
-  userCourses UserCourse[]
+  UserCourse  UserCourse[]
 }
 
-model UserCourse {
-  userId      String
-  courseId    String
-  createdAt   DateTime  @default(now())
-  
-  @@id([userId, courseId])
-  
-  user        User      @relation(fields: [userId], references: [id])
-  course      Course    @relation(fields: [courseId], references: [id])
+model Message {
+  id        String   @id @default(uuid())
+  threadId  String
+  authorId  String
+  message   String
+  createdAt DateTime @default(now())
+  User      User     @relation(fields: [authorId], references: [id])
+  Thread    Thread   @relation(fields: [threadId], references: [id])
 }
 
 model Thread {
@@ -61,20 +47,23 @@ model Thread {
   content        String
   parentThreadId String?
   Message        Message[]
-  user           User       @relation(fields: [authorId], references: [id])
-  course         Course     @relation(fields: [courseId], references: [id])
-  parentThread   Thread?    @relation("ChildThreads", fields: [parentThreadId], references: [id])
-  childThreads   Thread[]   @relation("ChildThreads")
+  User           User       @relation(fields: [authorId], references: [id])
+  Course         Course     @relation(fields: [courseId], references: [id])
+  Thread         Thread?    @relation("ThreadToThread", fields: [parentThreadId], references: [id])
+  other_Thread   Thread[]   @relation("ThreadToThread")
 }
 
-model Message {
-  id        String   @id @default(uuid())
-  threadId  String
-  authorId  String
-  message   String
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [authorId], references: [id])
-  thread    Thread   @relation(fields: [threadId], references: [id])
+model User {
+  id         String       @id @default(uuid())
+  firstName  String
+  lastName   String       @unique
+  role       UserRole
+  year       Int
+  email      String       @unique
+  Auth       Auth?
+  Message    Message[]
+  Thread     Thread[]
+  UserCourse UserCourse[]
 }
 
 model UserCourse {
@@ -87,12 +76,6 @@ model UserCourse {
   @@id([userId, courseId])
 }
 
-enum UserRole {
-  Student
-  TA
-  Lecturer
-}
-
 enum Status {
   pending
   answered
@@ -103,4 +86,10 @@ enum UrgencyTag {
   urgent
   regular
   lowPriority
+}
+
+enum UserRole {
+  Student
+  TA
+  Lecturer
 }
