@@ -4,11 +4,11 @@ import threadRoutes from './threadRoutes';
 const router = express.Router();
 
 router.use('/threads',threadRoutes);
-router.get('/:user_id', getCourses);
+router.get('/', getCourses);
 router.post('/join', joinCourse);
-router.get('/:courseId', getCourseInfo);
+router.get('/:course_id', getCourseInfo);
 router.post('/', createCourse);
-router.put('/:courseId', updateCourseInfo);
+router.put('/:course_id', updateCourseInfo);
 router.delete('/', deleteCourse);
 
 export default router;

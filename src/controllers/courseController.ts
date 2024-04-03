@@ -24,11 +24,12 @@ async function getCourses(req: Request, res: Response) {
 async function joinCourse(req: Request, res: Response) {
     try{
         const { courseId } = req.body;
-        const userId = req.user?.id
+        const userId = req.user?.id;
+
         if (!userId) {
             return res.status(400).json({ error: 'User ID not provided' });
         }
-        console.log(userId)
+
         const userCourse = await prisma.userCourse.create({
             data: {
                 courseId,
@@ -43,10 +44,10 @@ async function joinCourse(req: Request, res: Response) {
 
 async function getCourseInfo(req: Request, res: Response) {
     try {
-        const { courseId } = req.params;
+        const { course_id } = req.params;
         const course = await prisma.course.findUnique({
             where: {
-                id: courseId
+                id: course_id
             },
         })
         if (!course) {
@@ -62,8 +63,7 @@ async function getCourseInfo(req: Request, res: Response) {
 
 async function createCourse(req: Request, res: Response) {
     try {
-        const {name, semester, year, unicourseID} = req.body;
-        const uniCourseId = req.body.uniCourseId;
+        const {name, semester, year, uniCourseId} = req.body;
         if (!name || !semester || !year || !uniCourseId) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
@@ -96,15 +96,15 @@ async function createCourse(req: Request, res: Response) {
 
 async function updateCourseInfo(req: Request, res: Response) {
     try {
-        const {courseId} = req.params;
+        const {course_id} = req.params;
         const {name, semester, year, uniCourseId} = req.body;
-        if (!courseId ||!name ||!semester ||!year ||!uniCourseId) {
+        if (!course_id ||!name ||!semester ||!year ||!uniCourseId) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
         if (typeof name !== 'string' ||
             typeof semester !== 'string' ||
             typeof year !== 'number' ||
-            typeof uniCourseId !== 'number') {
+            typeof uniCourseId !== 'string') {
             return res.status(400).json({ error: 'Invalid data types' });
         }
         if (year <= 0 || !Number.isInteger(year)) {
@@ -112,7 +112,7 @@ async function updateCourseInfo(req: Request, res: Response) {
         }
         const course = await prisma.course.update({
             where: {
-                courseId
+                id: course_id
             },
             data: {
                 name,
@@ -134,10 +134,10 @@ async function updateCourseInfo(req: Request, res: Response) {
 
 async function deleteCourse(req: Request, res: Response) {
     try {
-        const {courseId} = req.params;
+        const {course_id} = req.params;
         const course = await prisma.course.delete({
             where: {
-                courseId
+                id: course_id
             }
         })
         if (!course) {
@@ -152,4 +152,4 @@ async function deleteCourse(req: Request, res: Response) {
 }
 
 
-export { getCourses, joinCourse, getCourseInfo, createCourse};
+export { getCourses, joinCourse, getCourseInfo, createCourse, updateCourseInfo, deleteCourse};
