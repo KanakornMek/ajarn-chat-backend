@@ -1,8 +1,10 @@
-import express from 'express';
+import express, {NextFunction, Request, Response} from 'express';
 import { getCourses, joinCourse, getCourseInfo, createCourse, updateCourseInfo, deleteCourse } from '../controllers/courseController';
 import threadRoutes from './threadRoutes';
 const router = express.Router();
-router.use('/:course_id/threads', threadRoutes);
+
+
+router.use('/:course_id/threads', threadRoutes,);
 
 router.get('/', getCourses);
 router.post('/join', joinCourse);

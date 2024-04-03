@@ -1,44 +1,10 @@
 import { Request, Response } from 'express';
 import { prisma } from '../db/prismaClient';
 import { Status, UrgencyTag } from '@prisma/client';
+import parseStatus from '../helpers/parseStatus';
+import parseUrgency from '../helpers/parseUrgency';
+import parseUrgencyInit from '../helpers/parseUrgencyInit';
 
-
-function parseStatus(status: string): Status | undefined {
-    switch (status.toLowerCase()) {
-        case 'pending':
-            return Status.pending;
-        case 'answers':
-            return Status.answered;
-        case 'archieved':
-            return Status.archived;
-        default:
-            return undefined;
-    }
-}
-
-function parseUrgency(ungency: string): UrgencyTag | undefined {
-    switch (ungency.toLowerCase()) {
-        case 'urgent':
-            return UrgencyTag.urgent;
-        case 'regular':
-            return UrgencyTag.regular;
-        case'lowpriority':
-            return UrgencyTag.lowPriority;
-        default:
-            return undefined;
-    }
-}
-
-function parseUrgencyInit(ungency: string): UrgencyTag{
-    switch (ungency.toLowerCase()) {
-        case 'urgent':
-            return UrgencyTag.urgent;
-        case 'regular':
-            return UrgencyTag.regular;
-        default:
-            return UrgencyTag.lowPriority;
-    }
-}
 async function getThreads(req: Request, res: Response) {
     let courseId = req.params.course_id;
     let status: Status | undefined;
@@ -54,20 +20,20 @@ async function getThreads(req: Request, res: Response) {
                 // Handle invalid status string
                 return res.status(400).json({ error: 'Invalid status value' });
             }
-            const threads = await prisma.thread.findMany({
-                where: {
-                    courseId: courseId, //Filter by course id
-                    status: status //Filter by status
-                }
-            })
-
-            res.status(200).json(threads);
         }
+        const threads = await prisma.thread.findMany({
+            where: {
+                courseId: courseId, //Filter by course id
+                status: status //Filter by status
+            }
+        })
+        console.log(threads);
+        res.status(200).json(threads);
+        
     } catch (error) {
         console.error('Error fetching threads:', error);
-        throw error;
+        res.status(500).send(error);
     }
-
 }
 
 // get thread by thread id
@@ -87,7 +53,9 @@ async function getThread(req: Request, res: Response) {
 }
 
 async function createThread(req: Request, res: Response) {
-    let {course_id, urgencyTagString, topic, content, parentThread} = req.body;
+    let { urgencyTagString, topic, content, parentThread} = req.body;
+    const { course_id } = req.params;
+    console.log(course_id)
     let authorId = req.user?.id
     if (!parentThread){
         parentThread = null;
@@ -107,12 +75,17 @@ async function createThread(req: Request, res: Response) {
                 user: {
                     connect: {id: authorId}
                 },
-                parentThread: {
-                    connect: {id: parentThread}
-                }
+                ...(parentThread && {
+                    parentThread: {
+                        connect: { id: parentThread }
+                    }
+                })
             }
         });
+        res.status(201).json(new_thread);
     }catch (error) {
+        console.error('Error creating thread:', error);
+        res.status(500).send(error)
     }
 }
 
