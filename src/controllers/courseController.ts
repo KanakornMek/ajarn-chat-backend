@@ -12,7 +12,7 @@ async function getCourses(req: Request, res: Response) {
 
             },
             include: {
-                Course: true
+                course: true
             }
         })
         res.status(200).json(courses);
