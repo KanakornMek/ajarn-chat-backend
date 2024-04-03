@@ -101,13 +101,13 @@ async function createThread(req: Request, res: Response) {
                 urgencyTag,
                 topic,
                 content,
-                Course: {
+                course: {
                     connect: {id: course_id}
                 },
-                User: {
+                user: {
                     connect: {id: authorId}
                 },
-                other_Thread: {
+                parentThread: {
                     connect: {id: parentThread}
                 }
             }
