@@ -1,11 +1,13 @@
-import express from 'express';
-import { getThreads, createThread } from '../controllers/threadController';
-import messageRoutes from '../routes/messageRoutes';
+import express, { Request, Response, NextFunction } from 'express';
+import { getThreads, createThread, getThread, updateThread } from '../controllers/threadController';
+import messageRoutes from "../routes/messageRoutes";
+const router = express.Router({mergeParams: true});
 
-const router = express.Router();
 
 router.use('/:thread_id/messages', messageRoutes);
 router.get('/', getThreads);
+router.get('/:thread_id', getThread);
 router.post('/', createThread);
+router.put('/:thread_id', updateThread);
 
 export default router;

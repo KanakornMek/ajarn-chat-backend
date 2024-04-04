@@ -2,21 +2,21 @@ import express, { Request, Response, Router } from 'express';
 import { prisma } from '../db/prismaClient';
 import { UserRole, Status } from '@prisma/client';
 
-const router: Router = express.Router();
 
 // Sees all the messages associated with a given thread
 async function getAllMessages(req: Request, res: Response) {
     try {
         const threadId = req.params.threadId as string;
-        const limit: number = parseInt(req.query.limit as string, 10);
+        // const limit: number = parseInt(req.query.limit as string, 10);
         const messages = await prisma.message.findMany({
             where: {
                 threadId // threadId: threadId
             },
-            take: limit
+            // take: limit
         });
         res.json(messages);
     } catch (err) {
+        console.log(err);
         res.status(500).send('Internal Server Error');
     }
 }
@@ -69,30 +69,21 @@ async function createMessage(req: Request, res: Response) {
     try {
         const authorId = req.user?.id as string;
         const message = req.body.message;
-        const threadId = req.params.threadId as string;
+        const threadId = req.params.thread_id as string;
         const createdMessage = await prisma.message.create({
             data: {
                 //Automatically generates a unique message id
                 threadId,
                 authorId,
                 message,
+            },
+            include: {
+                user: true
             }
         });
-
-        // Fetch message author details
-        const messageAuthor = await prisma.user.findUnique({
-            where: {
-                id: authorId
-            }
-        });
-        
-        if (!messageAuthor) {
-            res.status(401).send('Author not found');
-            return;
-        }
 
         // Check if message author is a Lecturer
-        if (messageAuthor?.role === UserRole.Lecturer) {
+        if (createdMessage.user.role === UserRole.Lecturer) {
             // Update thread status to answered
             await prisma.thread.update({
                 where: {
