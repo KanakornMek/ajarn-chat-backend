@@ -1,0 +1,68 @@
+[33mcommit ad6821a365bc92a8802946ef4beb602812e1458e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 75cf175 27c5719
+Author: KanakornMek <64399978+KanakornMek@users.noreply.github.com>
+Date:   Tue Mar 26 15:57:13 2024 +0700
+
+    Merge pull request #3 from KanakornMek/feature/authentication
+    
+    bugfix: fix returning id from auth instead of user
+
+[33mcommit 27c57195cfa997f307ac5f4dfcb0348b95aaf395[m[33m ([m[1;31morigin/feature/authentication[m[33m)[m
+Author: KanakornMek <kanakorn.meka@gmail.com>
+Date:   Tue Mar 26 15:47:31 2024 +0700
+
+    bugfix: fix returning id from auth instead of user
+
+[33mcommit 75cf1756b8e2acc914157eeeb390174bd3f31406[m
+Merge: 204a96e cc4eaab
+Author: KanakornMek <64399978+KanakornMek@users.noreply.github.com>
+Date:   Mon Mar 25 16:07:43 2024 +0700
+
+    Merge pull request #2 from KanakornMek/feature/authentication
+    
+    feat: authentication and examples finished
+
+[33mcommit cc4eaabd6808f66698ef8d9eb19e8e0b6a1715e8[m
+Author: KanakornMek <kanakorn.meka@gmail.com>
+Date:   Mon Mar 25 16:07:03 2024 +0700
+
+    feat: authentication and examples finished
+
+[33mcommit 204a96ecdca8e703a7a4d36dc4299e716e80b85f[m
+Merge: 584d19c 04f10ba
+Author: KanakornMek <64399978+KanakornMek@users.noreply.github.com>
+Date:   Mon Mar 25 11:31:19 2024 +0700
+
+    Merge pull request #1 from KanakornMek/bugfix/threadRoutes-change
+    
+    fix: change the threadroutes to course
+
+[33mcommit 04f10bacca4385b91b3195c2530b33c38bdc2463[m[33m ([m[1;31morigin/bugfix/threadRoutes-change[m[33m, [m[1;32mbugfix/threadRoutes-change[m[33m)[m
+Author: KanakornMek <kanakorn.meka@gmail.com>
+Date:   Mon Mar 25 11:17:41 2024 +0700
+
+    fix: change the threadroutes to course
+
+[33mcommit 584d19c4f006340b6c9aab2b45dd2bb4ce50a3fb[m
+Author: KanakornMek <64399978+KanakornMek@users.noreply.github.com>
+Date:   Sun Mar 24 22:11:02 2024 +0700
+
+    fix: remove DS_Store
+
+[33mcommit 992d0ea76c221bbf96417f96e3b9226252291d53[m
+Author: KanakornMek <kanakorn.meka@gmail.com>
+Date:   Sun Mar 24 22:09:26 2024 +0700
+
+    fix: gitignore DS_Store
+
+[33mcommit bc23e1c4e611c91094f945c4a5b3d8a9375b5396[m
+Author: KanakornMek <kanakorn.meka@gmail.com>
+Date:   Sun Mar 24 22:05:35 2024 +0700
+
+    feat: initialization
+
+[33mcommit 22818441dac35f26dcb00f9e072347a496a99193[m
+Author: KanakornMek <64399978+KanakornMek@users.noreply.github.com>
+Date:   Sat Mar 23 22:06:55 2024 +0700
+
+    Initial commit

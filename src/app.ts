@@ -3,6 +3,7 @@ import cors from 'cors';
 import authMiddleware from './middlewares/authMiddleware';
 import authRoutes from './routes/authRoutes';
 import courseRoutes from './routes/courseRoutes';
+import messageRoutes from './routes/messageRoutes';
 
 
 const app = express();

@@ -17,20 +17,20 @@ model Auth {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  firstName String
-  lastName  String    @unique
-  role      UserRole
-  year      Int
-  email     String    @unique
-  auth      Auth?
-  messages  Message[]
-  threads   Thread[]
+  id          String       @id @default(uuid())
+  firstName   String
+  lastName    String       @unique
+  role        UserRole
+  year        Int
+  email       String       @unique
+  auth        Auth?
+  messages    Message[]
+  threads     Thread[]
   userCourses UserCourse[]
 }
 
 model Course {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
   semester    String
   year        Int
@@ -40,14 +40,13 @@ model Course {
 }
 
 model UserCourse {
-  userId      String
-  courseId    String
-  createdAt   DateTime  @default(now())
-  
+  userId    String
+  courseId  String
+  createdAt DateTime @default(now())
+  course    Course   @relation(fields: [courseId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
   @@id([userId, courseId])
-  
-  user        User      @relation(fields: [userId], references: [id])
-  course      Course    @relation(fields: [courseId], references: [id])
 }
 
 model Thread {
