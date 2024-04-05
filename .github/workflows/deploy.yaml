@@ -24,3 +24,4 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           SOURCE: .
           EXCLUDE: "/node_modules/"
+          SCRIPT_BEFORE: ls
