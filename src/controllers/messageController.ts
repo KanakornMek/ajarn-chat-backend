@@ -12,9 +12,21 @@ async function getAllMessages(req: Request, res: Response) {
             where: {
                 threadId // threadId: threadId
             },
+            include: {
+                user: true
+            }
             // take: limit
         });
-        res.json(messages);
+        
+        res.json(messages.map(message => ({
+            ...message,
+            user: {
+              id: message.user.id,
+              firstName: message.user.firstName,
+              lastName: message.user.lastName,
+              role: message.user.role
+            }
+        })));
     } catch (err) {
         console.log(err);
         res.status(500).send('Internal Server Error');
