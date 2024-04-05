@@ -6,47 +6,54 @@ import bcrypt from 'bcrypt';
 import parseUserRole from '../helpers/userRoleParser';
 
 async function login(req: Request, res: Response) {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
+        const auth = await prisma.auth.findUnique({
+            where: {
+                email
+            }, include: {
+                user: true
+            }
+        });
 
-    const auth = await prisma.auth.findUnique({
-        where: {
-            email
-        }, include: {
-            user: true
+        if (!auth) {
+            return res.status(401).json({ message: 'Invalid username or password' });
         }
-    });
 
-    if (!auth) {
-        return res.status(401).json({ message: 'Invalid username or password' });
+        if (!bcrypt.compareSync(password, auth.password)) {
+            return res.status(401).json({ message: 'Invalid username or password' });
+        }
+
+        const accessToken = jwt.sign({ userId: auth.user.id }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '30m' });
+        const refreshToken = jwt.sign({ userId: auth.user.id }, process.env.REFRESH_TOKEN_SECRET as string);
+
+        res.json({ accessToken, refreshToken });
+    } catch(err) {
+        res.status(500).send(err);
     }
-
-    if (!bcrypt.compareSync(password, auth.password)) {
-        return res.status(401).json({ message: 'Invalid username or password' });
-    }
-
-    const accessToken = jwt.sign({ userId: auth.user.id }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '30m' });
-    const refreshToken = jwt.sign({ userId: auth.user.id }, process.env.REFRESH_TOKEN_SECRET as string);
-
-
-    res.json({ accessToken, refreshToken });
+    
 }
 
 async function refreshaccessToken(req: Request, res: Response) {
-    const refreshToken = req.body.refreshToken;
-
-    if (!refreshToken) {
-        return res.status(401).json({ message: 'No refresh token provided' });
-    }
-
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string, (err: jwt.VerifyErrors | null, decoded: any) => {
-        if (err) {
-            return res.status(403).json({ message: 'Invalid refresh token' });
+    try {
+        const refreshToken = req.body.refreshToken;
+        if (!refreshToken) {
+            return res.status(401).json({ message: 'No refresh token provided' });
         }
 
-        const accessToken = jwt.sign({ userId: decoded.userId }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '15m' });
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string, (err: jwt.VerifyErrors | null, decoded: any) => {
+            if (err) {
+                return res.status(403).json({ message: 'Invalid refresh token' });
+            }
 
-        res.json({ accessToken });
-    });
+            const accessToken = jwt.sign({ userId: decoded.userId }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '15m' });
+
+            res.json({ accessToken });
+        });
+    } catch (err) {
+        res.status(500).send(err);
+    }
+    
 }
 
 async function logout(req: Request, res: Response) {
@@ -80,7 +87,7 @@ async function signup(req: Request, res: Response) {
 
         res.status(201).json({ message: 'User created successfully' });
     } catch (err) {
-    
+        res.status(500).send(err);
     }
     
 }
