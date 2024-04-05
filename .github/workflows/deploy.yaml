@@ -17,7 +17,7 @@ jobs:
         run: npm install
 
       - name: Deploy
-        uses: easingthemes/ssh-deploy@v2
+        uses: easingthemes/ssh-deploy@main
         with:
           REMOTE_HOST: ${{ secrets.SERVER_HOST }}
           REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
