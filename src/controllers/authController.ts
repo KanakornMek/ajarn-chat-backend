@@ -89,8 +89,23 @@ async function signup(req: Request, res: Response) {
     } catch (err) {
         res.status(500).send(err);
     }
-    
+}
+
+async function validate(req: Request, res: Response) {
+    try{
+        const { accessToken } = req.body;
+        jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET as string, (err: jwt.VerifyErrors | null, decoded: any) => {
+            if (err) {
+                return res.status(403).json({ message: 'Invalid access token' });
+            }
+            res.status(200).json(decoded);
+        });
+
+    } catch(err) {
+        res.status(500).send(err);
+    }
+
 }
 
 
-export { login, refreshaccessToken, signup };
+export { login, refreshaccessToken, signup, validate };

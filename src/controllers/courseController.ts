@@ -14,7 +14,13 @@ async function getCourses(req: Request, res: Response) {
                 course: true
             }
         })
-        res.status(200).json(courses);
+
+        const formattedCourses = courses.map(courseItem => {
+            const { id, name, semester, year, uniCourseId } = courseItem.course;
+            return { id, name, semester, year, uniCourseId };
+        });
+        
+        res.status(200).json(formattedCourses);
     } catch(err) {
         res.status(500).send(err);
     }
