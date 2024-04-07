@@ -13,6 +13,7 @@ async function getThreads(req: Request, res: Response) {
             const statusString = req.query.status as string;
             status = parseStatus(statusString);
 
+            console.log(status);
             // Convert string to enum value
             if (statusString in Status) {
                 status = Status[statusString as keyof typeof Status];
@@ -60,7 +61,7 @@ async function createThread(req: Request, res: Response) {
     if (!parentThread){
         parentThread = null;
     }
-    let urgencyTag: UrgencyTag;
+    let urgencyTag: UrgencyTag | undefined;
     urgencyTag = parseUrgencyInit(urgencyTagString);
     try{
         const new_thread = await prisma.thread.create({
