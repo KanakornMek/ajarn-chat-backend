@@ -8,13 +8,13 @@ import parseUrgencyInit from '../helpers/parseUrgencyInit';
 async function getThreads(req: Request, res: Response) {
     let courseId = req.params.course_id;
     let status: Status | undefined;
+    let urgencyTag: UrgencyTag | undefined;
     try {
         if (req.query.status) {
             const statusString = req.query.status as string;
             status = parseStatus(statusString);
 
             console.log(status);
-            // Convert string to enum value
             if (statusString in Status) {
                 status = Status[statusString as keyof typeof Status];
             } else {
@@ -22,10 +22,22 @@ async function getThreads(req: Request, res: Response) {
                 return res.status(400).json({ error: 'Invalid status value' });
             }
         }
+        if (req.query.urgency) {
+            const urgencyString = req.query.urgency as string;
+            urgencyTag = parseUrgency(urgencyString);
+            console.log(urgencyTag);
+            if (urgencyString in UrgencyTag) {
+                urgencyTag = UrgencyTag[urgencyString as keyof typeof UrgencyTag];
+            } else {
+                // Handle invalid urgency string
+                return res.status(400).json({ error: 'Invalid urgency value' });
+            }
+        }
         const threads = await prisma.thread.findMany({
             where: {
                 courseId: courseId, //Filter by course id
-                status: status //Filter by status
+                status: status, //Filter by status
+                urgencyTag: urgencyTag //Filter by urgency
             }
         })
         console.log(threads);
