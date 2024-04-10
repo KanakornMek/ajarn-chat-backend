@@ -6,7 +6,7 @@ import { UserRole, Status } from '@prisma/client';
 // Sees all the messages associated with a given thread
 async function getAllMessages(req: Request, res: Response) {
     try {
-        const threadId = req.params.threadId as string;
+        const threadId = req.params.thread_id as string;
         // const limit: number = parseInt(req.query.limit as string, 10);
         const messages = await prisma.message.findMany({
             where: {
