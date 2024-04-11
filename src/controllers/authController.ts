@@ -48,7 +48,7 @@ async function refreshaccessToken(req: Request, res: Response) {
 
             const accessToken = jwt.sign({ userId: decoded.userId }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '15m' });
 
-            res.json({ accessToken });
+            res.json({ accessToken, refreshToken });
         });
     } catch (err) {
         res.status(500).send(err);
