@@ -41,6 +41,9 @@ async function getSingleMessage(req: Request, res: Response) {
         const message = await prisma.message.findUnique({
             where: {
                 id: messageId
+            },
+            include: {
+                user: true
             }
         });
         if (message) {
@@ -67,6 +70,9 @@ async function updateMessage(req: Request, res: Response) {
             data: {
                 message: updateData.message,
                 //Note: add LastUpdated (after modifying in Prisma Schema)
+            },
+            include: {
+                user: true
             }
         });
         res.status(200).json(message);

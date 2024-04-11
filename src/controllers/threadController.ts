@@ -38,6 +38,9 @@ async function getThreads(req: Request, res: Response) {
                 courseId: courseId, //Filter by course id
                 status: status, //Filter by status
                 urgencyTag: urgencyTag //Filter by urgency
+            },
+            include: {
+                user: true
             }
         })
         console.log(threads);
@@ -57,6 +60,9 @@ async function getThread(req: Request, res: Response) {
             where:{
                 id: threadId, //check thread id
             },
+            include: {
+                user: true
+            }
         });
         res.status(200).json(thread);
     }catch (error) {
