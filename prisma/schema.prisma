@@ -86,10 +86,12 @@ enum Status {
   pending
   answered
   archived
+  announcement
 }
 
 enum UrgencyTag {
   urgent
   regular
   lowPriority
+  announcement
 }
