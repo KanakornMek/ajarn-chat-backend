@@ -3,7 +3,7 @@ import cors from 'cors';
 import authMiddleware from './middlewares/authMiddleware';
 import authRoutes from './routes/authRoutes';
 import courseRoutes from './routes/courseRoutes';
-import messageRoutes from './routes/messageRoutes';
+import userRoutes from './routes/userRoutes';
 
 
 const app = express();
@@ -19,6 +19,7 @@ app.use(authMiddleware);
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!');
 })
+app.use('/user', userRoutes);
 app.use('/courses', courseRoutes);
 
 export default app;
