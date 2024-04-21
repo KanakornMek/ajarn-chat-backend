@@ -11,6 +11,7 @@ async function getAnnouncements(req: Request, res: Response) {
         const announcements = await prisma.thread.findMany({
             where: {
                 courseId: courseId, //Filter by course id
+                urgencyTag: UrgencyTag.announcement
             },
             include: {
                 user: true
