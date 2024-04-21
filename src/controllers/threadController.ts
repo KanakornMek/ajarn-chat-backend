@@ -40,7 +40,8 @@ async function getThreads(req: Request, res: Response) {
                 urgencyTag: urgencyTag //Filter by urgency
             },
             include: {
-                user: true
+                user: true,
+                parentThread: true
             }
         })
         console.log(threads);
