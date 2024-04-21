@@ -59,6 +59,7 @@ model Thread {
   topic          String
   content        String
   parentThreadId String?
+  attachment     String?
   Message        Message[]
   user           User       @relation(fields: [authorId], references: [id])
   course         Course     @relation(fields: [courseId], references: [id])
@@ -86,10 +87,12 @@ enum Status {
   pending
   answered
   archived
+  announcement
 }
 
 enum UrgencyTag {
   urgent
   regular
   lowPriority
+  announcement
 }

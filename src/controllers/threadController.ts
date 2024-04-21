@@ -4,6 +4,15 @@ import { Status, UrgencyTag } from '@prisma/client';
 import parseStatus from '../helpers/parseStatus';
 import parseUrgency from '../helpers/parseUrgency';
 import parseUrgencyInit from '../helpers/parseUrgencyInit';
+import { Storage } from '@google-cloud/storage';
+import { nanoid } from 'nanoid';
+
+const storage = new Storage({
+    projectId: 'thinc-thonc',
+    keyFilename: './thinc-thonc.json' // Path to your service account JSON file
+  });
+const bucketName = 'thincthoncbucket';
+
 
 async function getThreads(req: Request, res: Response) {
     let courseId = req.params.course_id;
@@ -72,7 +81,27 @@ async function getThread(req: Request, res: Response) {
 }
 
 async function createThread(req: Request, res: Response) {
-    let { urgencyTagString, topic, content, parentThread} = req.body;
+    const bucketName = 'your-bucket-name';
+    let attachment = null;
+    if (req.file){
+        const fileName = nanoid()
+        const blob = storage.bucket('thincthoncbucket').file(fileName);
+        const blobStream = blob.createWriteStream({
+            resumable: false,
+            gzip: true
+        });
+        blobStream.on('error', (err) => {
+            res.status(500).send('Error uploading file: ' + err);
+          });
+        
+          blobStream.on('finish', () => {
+            res.status(200).send('File uploaded successfully.');
+          });
+        
+        blobStream.end(req.file.buffer);
+        attachment = 'https://storage.googleapis.com/${bucketName}/${fileName}';
+    }
+    let { urgencyTagString, topic, content, parentThread } = req.body;
     const { course_id } = req.params;
     console.log(course_id)
     let authorId = req.user?.id
@@ -88,6 +117,7 @@ async function createThread(req: Request, res: Response) {
                 urgencyTag,
                 topic,
                 content,
+                attachment,
                 course: {
                     connect: {id: course_id}
                 },
