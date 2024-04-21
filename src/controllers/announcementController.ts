@@ -53,8 +53,8 @@ async function createAnnouncement(req: Request, res: Response) {
         if (!author) {
             res.status(404).send('No author found');
         } else {
-            if (author.role != UserRole.Lecturer) {
-                res.status(404).send('Not a lecturer');
+            if (author.role===UserRole.Student) {
+                res.status(404).send('Not a lecturer or TA');
             }
         }
         const create_announcement = await prisma.thread.create({
@@ -87,8 +87,8 @@ async function updateAnnouncement(req: Request, res: Response) {
         if (!author) {
             res.status(404).send('No author found');
         } else {
-            if (author.role != UserRole.Lecturer) {
-                res.status(404).send('Not a lecturer');
+            if (author.role === UserRole.Student) {
+                res.status(404).send('Not a lecturer or TA');
             }
         }
         const updatedAnnouncement = await prisma.thread.update({
