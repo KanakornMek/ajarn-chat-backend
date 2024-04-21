@@ -80,8 +80,17 @@ async function createAnnouncement(req: Request, res: Response) {
 
 async function updateAnnouncement(req: Request, res: Response) {
     const announcementId = req.params.announcement_id;
-    const { topic,content } = req.body;
-    try{
+    const { topic, content } = req.body;
+    const authorId = req.user?.id;
+    try {
+        const author = await prisma.user.findUnique({ where: { id: authorId } });
+        if (!author) {
+            res.status(404).send('No author found');
+        } else {
+            if (author.role != UserRole.Lecturer) {
+                res.status(404).send('Not a lecturer');
+            }
+        }
         const updatedAnnouncement = await prisma.thread.update({
             where: {
                 id: announcementId,

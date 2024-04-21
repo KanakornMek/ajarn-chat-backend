@@ -24,14 +24,14 @@ async function login(req: Request, res: Response) {
             return res.status(401).json({ message: 'Invalid username or password' });
         }
 
-        const accessToken = jwt.sign({ userId: auth.user.id }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '30m' });
+        const accessToken = jwt.sign({ userId: auth.user.id, firstName: auth.user.firstName, lastName: auth.user.lastName }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '30m' });
         const refreshToken = jwt.sign({ userId: auth.user.id }, process.env.REFRESH_TOKEN_SECRET as string);
 
         res.json({ accessToken, refreshToken });
-    } catch(err) {
+    } catch (err) {
         res.status(500).send(err);
     }
-    
+
 }
 
 async function refreshaccessToken(req: Request, res: Response) {
@@ -46,24 +46,15 @@ async function refreshaccessToken(req: Request, res: Response) {
                 return res.status(403).json({ message: 'Invalid refresh token' });
             }
 
-            const accessToken = jwt.sign({ userId: decoded.userId }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '15m' });
-
+            const accessToken = jwt.sign({ serId: decoded.userId }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: '15m' });
             res.json({ accessToken, refreshToken });
         });
     } catch (err) {
         res.status(500).send(err);
     }
-    
+
 }
 
-async function logout(req: Request, res: Response) {
-    try {
-        const userId = req.user?.id;
-        
-    } catch(err) {
-
-    }
-}
 
 async function signup(req: Request, res: Response) {
     try {
@@ -92,7 +83,7 @@ async function signup(req: Request, res: Response) {
 }
 
 async function validate(req: Request, res: Response) {
-    try{
+    try {
         const { accessToken } = req.body;
         jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET as string, (err: jwt.VerifyErrors | null, decoded: any) => {
             if (err) {
@@ -101,7 +92,7 @@ async function validate(req: Request, res: Response) {
             res.status(200).json(decoded);
         });
 
-    } catch(err) {
+    } catch (err) {
         res.status(500).send(err);
     }
 
