@@ -14,7 +14,8 @@ async function getUserInfo(req: Request, res: Response) {
             select: {
                 firstName: true,
                 lastName: true,
-                email: true
+                email: true,
+                role: true
             }
         })
         if (!user) {
