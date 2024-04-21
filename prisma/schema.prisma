@@ -59,6 +59,7 @@ model Thread {
   topic          String
   content        String
   parentThreadId String?
+  attachment     String?
   Message        Message[]
   user           User       @relation(fields: [authorId], references: [id])
   course         Course     @relation(fields: [courseId], references: [id])
